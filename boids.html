@@ -1,0 +1,51 @@
+---
+layout: app
+title: Boids
+---
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  p {
+    color: #ebedef;
+  }
+  canvas {
+    margin: 0;
+  }
+  .float {
+    position: absolute;
+    width: 100%;
+  }
+  .float.top {
+    top: 30px;
+  }
+  .float .block {
+    margin: 0 auto;
+    text-align: center;
+  }
+  h1 {
+    font-size: 50px;
+    border: none;
+    padding: 0;
+    margin-bottom: 0;
+    line-height: 1.2;
+  }
+  a {
+    text-decoration: none;
+  }
+</style>
+
+<div class="float top">
+  <div class="block">
+    <h1>Boids.</h1>
+    <a href="/">About</a> |
+    <a href="https://github.com/ChrisCummins/chriscummins.github.io/tree/master/js/boids.js">Source code</a>
+  </div>
+</div>
+
+<div id="container"></div>
+
+<script src="/js/three.min.js"></script>
+<script src="/js/boids.js"></script>

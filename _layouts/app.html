@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>{{ page.title }}</title>
+    <meta name="description" content="The personal website of software developer Chris Cummins.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="msapplication-tooltip" content="Chris Cummins personal website">
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/styles.css">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    {%include google-analytics.html %}
+
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script src="/js/site.min.js"></script>
+
+    <script src="//cdn.jsdelivr.net/jquery.hotkeys/0.1.0/jquery.hotkeys.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+    <div class="app">
+      {{ content }}
+    </div>
+
+  </body>
+</html>
