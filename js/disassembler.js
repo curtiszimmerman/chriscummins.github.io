@@ -43,6 +43,11 @@ var Disassembler = Disassembler || {};
 
     var address = bytes[1] + bytes[2] + bytes[3];
     var jumpAddress = parseInt(address, 16) - idtLength;
+    var regA = 'r' + parseInt(bytes[1], 16);
+    var regB = 'r' + parseInt(bytes[2], 16);
+    var regC = 'r' + parseInt(bytes[3], 16);
+    var value = bytes[2] + bytes[3];
+    var paddedAddress = '00' + value;
 
     switch (parseInt(bytes[0], 16)) {
     case 0:
@@ -106,6 +111,56 @@ var Disassembler = Disassembler || {};
       this.mnemonic = 'cli';
       this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Disable interrupts';
+      break;
+    case 11:
+      this.mnemonic = 'mtr ' + regA + ' 0x' + paddedAddress;
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Load address ' + paddedAddress + ' to register ' + regA;
+      break;
+    case 12:
+      this.mnemonic = 'rtm ' + regA + ' 0x' + paddedAddress;
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Store register ' + regA + ' at address ' + paddedAddress;
+      break;
+    case 13:
+      this.mnemonic = 'imtr ' + regA + ', ' + regB + '(' + regC + ')';
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Load address ' + regB + ' + ' + regC + ' to register ' + regA;
+      break
+    case 14:
+      this.mnemonic = 'rtim ' + regA + ', ' + regB + '(' + regC + ')';
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Store register ' + regA + ' at address ' + regB + ' + ' + regC;
+      break;
+    case 15:
+      this.mnemonic = 'pshr ' + regA;
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Push register ' + regA + ' to stack';
+      break;
+    case 16:
+      this.mnemonic = 'popr ' + regA;
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Pop register ' + regA + ' from stack';
+      break;
+    case 17:
+      this.mnemonic = 'rtio 0x' + bytes[1] + ', ' + regA;
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Register ' + regA + ' to IO port 0x' + bytes[1];
+      break;
+    case 18:
+      this.mnemonic = 'iotr ' + regA + ', 0x' + bytes[2];
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'IO port 0x' + bytes[1] + ' to register ' + regA;
+      break;
+    case 19:
+      this.mnemonic = 'ldlr ' + regA + ', 0x' + value;
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Load immediate 0x' + value + ' to lower ' + regA;
+      break;
+    case 20:
+      this.mnemonic = 'ldur ' + regA + ', 0x' + value;;
+      this.instruction = this.mnemonic.toUpperCase();
+      this.desc = 'Load immediate 0x' + value + ' to upper ' + regA;
       break;
     default:
       throw "Invalid opcode '" + bytes[0] + "'";
