@@ -15,8 +15,6 @@ var Disassembler = Disassembler || {};
       new Array(width - length + 1).join(z) + n;
   }
 
-  var programContainsRoutines = false;
-
   // An instruction
   var Instruction = function(instruction, address, comment) {
 
@@ -52,114 +50,92 @@ var Disassembler = Disassembler || {};
     switch (parseInt(bytes[0], 16)) {
     case 0:
       this.mnemonic = 'iuc';
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'No operation';
       break;
     case 1:
       this.mnemonic = 'huc';
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Terminate';
       break;
     case 2:
       this.mnemonic = 'buc';
-      this.instruction = this.mnemonic.toUpperCase() + '    ' + address;
       this.desc = 'Jump to ' + address;
       this.next = [jumpAddress];
       break;
     case 3:
       this.mnemonic = 'bic';
-      this.instruction = this.mnemonic.toUpperCase() + '    ' + address;
       this.desc = 'Jump to ' + address + ' if condition flag is set';
       this.next.push(jumpAddress);
       break;
     case 4:
       this.mnemonic = 'seto   0x' + bytes[1] + ', 0x' +
         bytes[2] + ', 0x' + bytes[3];
-      this.instruction = 'SETO ' + bytes[1] + bytes[2] + bytes[3];
       this.desc = 'Set outputs ' + bytes[1] + ' AND ' + bytes[2] + ' XOR ' + bytes[3];
       break;
     case 5:
       this.mnemonic = 'tsti   0x' + bytes[1] + ', 0x' +
         bytes[2] + ', 0x' + bytes[3];
-      this.instruction = 'TSTI ' + bytes[1] + bytes[2] + bytes[3];
       this.desc = 'Test input port ' + parseInt(bytes[1], 16) + ' AND ' +
         bytes[2] + ' XOR ' + bytes[3];
       break;
     case 6:
       this.mnemonic = 'bsr';
-      this.instruction = this.mnemonic.toUpperCase() + '  ' + address;
       this.desc = 'Call subroutine ' + address;
       this.next = [jumpAddress];
-      programContainsRoutines = true; // Shit!
       break;
     case 7:
       this.mnemonic = 'rsr';
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Return from subroutine';
       break;
     case 8:
       this.mnemonic = 'rir';
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Return from interrupt';
       break;
     case 9:
       this.mnemonic = 'sei';
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Enable interrupts';
       break;
     case 10:
       this.mnemonic = 'cli';
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Disable interrupts';
       break;
     case 11:
       this.mnemonic = 'mtr ' + regA + ' 0x' + paddedAddress;
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Load address ' + paddedAddress + ' to register ' + regA;
       break;
     case 12:
       this.mnemonic = 'rtm ' + regA + ' 0x' + paddedAddress;
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Store register ' + regA + ' at address ' + paddedAddress;
       break;
     case 13:
       this.mnemonic = 'imtr ' + regA + ', ' + regB + '(' + regC + ')';
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Load address ' + regB + ' + ' + regC + ' to register ' + regA;
       break
     case 14:
       this.mnemonic = 'rtim ' + regA + ', ' + regB + '(' + regC + ')';
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Store register ' + regA + ' at address ' + regB + ' + ' + regC;
       break;
     case 15:
       this.mnemonic = 'pshr ' + regA;
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Push register ' + regA + ' to stack';
       break;
     case 16:
       this.mnemonic = 'popr ' + regA;
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Pop register ' + regA + ' from stack';
       break;
     case 17:
       this.mnemonic = 'rtio 0x' + bytes[1] + ', ' + regA;
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Register ' + regA + ' to IO port 0x' + bytes[1];
       break;
     case 18:
       this.mnemonic = 'iotr ' + regA + ', 0x' + bytes[2];
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'IO port 0x' + bytes[1] + ' to register ' + regA;
       break;
     case 19:
       this.mnemonic = 'ldlr ' + regA + ', 0x' + value;
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Load immediate 0x' + value + ' to lower ' + regA;
       break;
     case 20:
       this.mnemonic = 'ldur ' + regA + ', 0x' + value;;
-      this.instruction = this.mnemonic.toUpperCase();
       this.desc = 'Load immediate 0x' + value + ' to upper ' + regA;
       break;
     default:
@@ -263,7 +239,6 @@ var Disassembler = Disassembler || {};
 
   var $code = $('#code');
   var $errors = $('#errors');
-  var $warnings = $('#warnings');
   var $output = $('#output');
 
   var idtLength = 8; // Interrupt Descriptor Table length (in words)
@@ -290,65 +265,10 @@ var Disassembler = Disassembler || {};
       addError("<strong>At line " + i + ":</strong> " + err);
     }
 
-    if (programContainsRoutines)
-      addWarning("<strong>No code visualisation</strong> " +
-                 "Sorry, the code visualiser can't handle programs which " +
-                 "contain subroutines.");
-
     return {
       instructions: instructions,
       idt: idt
     };
-  }
-
-  var instructionsToChart = function(instructions) {
-    var definitions = "st=>start: Start\ne=>end: End\n", links = "";
-
-    var instructionDefinition = function(instruction, i) {
-      if (instruction.next[1] !== undefined) // Conditional instruction
-        return "i" + i + "=>condition: " + instruction.instruction + "\n";
-      else // Unconditional instruction
-        return "i" + i + "=>operation: " + instruction.instruction + "\n";
-    };
-
-    var instructionLinks = function(instruction, i) {
-      if (instruction.next[1] !== undefined) { // Conditional instruction
-        var links = "";
-
-        if (instruction.next[0] !== -1) // Valid address
-          links = "i" + i + "(no)->i" + instruction.next[0] + "\n";
-        if (instruction.next[1] !== -1) // Valid address
-          links += "i" + i + "(yes, right)->i" + instruction.next[1] + "\n";
-
-        return links
-      } else {
-        if (instruction.next[0] !== -1) // Valid address
-          return "i" + i + "->i" + instruction.next[0] + "\n";
-        else
-          return "";
-      }
-    }
-
-    var lastAddress = instructions.length + idtLength, instruction = '';
-
-    if (instructions.length) // Start and end symbols
-      links += "st->i" + idtLength + "\ni" + (lastAddress - 1) + "->e\n";
-
-    for (var i = idtLength; i < lastAddress; i++) {
-      instruction = instructions[i - idtLength];
-
-      // Check for valid addresses
-      if (instruction.next[0] >= lastAddress)
-        instruction.next[0] = -1;
-
-      if (instruction.next[1] >= lastAddress)
-        instruction.next[1] = -1;
-
-      definitions += instructionDefinition(instruction, i);
-      links += instructionLinks(instruction, i);
-    }
-
-    return definitions + links;
   }
 
   var showAssembly = function(data) {
@@ -405,8 +325,6 @@ var Disassembler = Disassembler || {};
     });
   };
 
-  var _diagram; // The flowchart
-
   // Display an array of instructions
   var show = function(data) {
 
@@ -419,18 +337,6 @@ var Disassembler = Disassembler || {};
       $('#code-output').show();
     else
       $('#code-output').hide();
-
-    if (!programContainsRoutines && instructions.length) { // Only draw the flowchart if we can
-      $('#diagram').show();
-
-      if (_diagram)
-        _diagram.clean();
-
-      _diagram = flowchart.parse(instructionsToChart(instructions));
-      _diagram.drawSVG('diagram');
-    } else {
-      $('#diagram').hide();
-    }
   };
 
   var addError = function(msg) {
@@ -440,9 +346,9 @@ var Disassembler = Disassembler || {};
   };
 
   var addWarning = function(msg) {
-    $warnings.append("<div class=\"alert alert-warning\">" + msg +
-                     "<a class=\"close\" data-dismiss=\"alert\" " +
-                     "href=\"#\">&times;</a></div>");
+    $errors.append("<div class=\"alert alert-warning\">" + msg +
+                   "<a class=\"close\" data-dismiss=\"alert\" " +
+                   "href=\"#\">&times;</a></div>");
   };
 
   var addInstruction = function(instruction, instructions) {
@@ -506,7 +412,6 @@ var Disassembler = Disassembler || {};
     _labelCounter = 0;
     _routineCounter = 0;
     _vectorCounter = 0;
-    programContainsRoutines = false;
 
     show(decode($code.val().split("\n")));
 
