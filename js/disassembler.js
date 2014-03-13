@@ -36,8 +36,6 @@ var Disassembler = Disassembler || {};
     this.addressHex = pad(address.toString(16), 8).toUpperCase();
     this.next = [this.address + 1];
 
-    if (comment !== undefined)
-      this.comment = comment;
 
     var address = bytes[1] + bytes[2] + bytes[3];
     var jumpAddress = parseInt(address, 16) - idtLength;
@@ -162,6 +160,13 @@ var Disassembler = Disassembler || {};
       throw "Invalid opcode '" + bytes[0] + "'";
     };
 
+    if (comment !== undefined)
+      this.comment = comment;
+    else if (this.desc !== undefined)
+      this.comment = this.desc;
+    else
+      this.comment = '';
+
     this.getLabel = function(type) {
       if (this.label === undefined) {
         if (type == 'routine')
@@ -202,28 +207,26 @@ var Disassembler = Disassembler || {};
           + '</span>';
       }
 
-      if (this.comment) {// Add inline comment at character 32
-        string = pad(string, 39, ' ', true) +
-          ' <span class="comment">; ' + this.comment + '</span>';
-      }
-
       return label + string;
     };
   };
 
   var Directive = function(name) {
+    this.comment = '';
     this.toString = function() {
       return '<span class="directive">.' + name + '</span>';
     };
   };
 
   var Comment = function(text) {
+    this.comment = '';
     this.toString = function() {
       return '<span class="comment">;; ' + text + '</span>';
     };
   };
 
   var BlankLine = function() {
+    this.comment = '';
     this.toString = function() {
       return ' ';
     };
@@ -373,7 +376,7 @@ var Disassembler = Disassembler || {};
 
   var addInstruction = function(instruction, instructions) {
 
-    var addRow = function(address, instruction, caption, id, target) {
+    var addRow = function(address, comment, instruction, caption, id, target) {
       var html = '<tr';
 
       if (caption && caption !== '')
@@ -391,7 +394,12 @@ var Disassembler = Disassembler || {};
         html += address;
 
       html += '</pre></td><td class="instruction"><pre>' +
-        instruction + '</pre></td></tr>';
+        instruction + '</pre></td><td class="comment">';
+
+      if (comment)
+        html += '<pre><span class="comment">; ' + comment + '</span></pre>';
+
+      html += '</td></tr>';
 
       $output.append(html);
     };
@@ -399,15 +407,15 @@ var Disassembler = Disassembler || {};
     var addInstructionRow = function(address, text, caption,
                                      instruction, instructions) {
       if (!instruction.next) // Non-instructions: comments, directives etc.
-        addRow(address, text, caption);
+        addRow(address,  instruction.comment, text, caption);
       if (instruction.next[0] !== instruction.address + 1) // Jump instructions
-        addRow(address, text, caption, '',
+        addRow(address, instruction.comment, text, caption, '',
                instructions[instruction.next[0]].addressHex);
       else if (Number(instruction.next[1])) // Branch instructions
-        addRow(address, text, caption, '',
+        addRow(address, instruction.comment, text, caption, '',
                instructions[instruction.next[1]].addressHex);
       else // Standard instruction
-        addRow(address, text, caption);
+        addRow(address, instruction.comment, text, caption);
     };
 
     var address = instruction.address === undefined ?
@@ -417,8 +425,8 @@ var Disassembler = Disassembler || {};
 
     if (lines.length > 1) { // Instruction contains label
       for (var i = 0; i < lines.length - 2; i++)
-        addRow('', lines[i]);
-      addRow('', lines[lines.length - 2], '', instruction.addressHex);
+        addRow('', '', lines[i]);
+      addRow('', instruction.comment, lines[lines.length - 2], '', instruction.addressHex);
       addInstructionRow(address, lines[lines.length - 1], caption, instruction, instructions);
     } else {
       addInstructionRow(address, lines[0], caption, instruction, instructions);
