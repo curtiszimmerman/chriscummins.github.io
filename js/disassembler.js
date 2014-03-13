@@ -49,7 +49,7 @@ var Disassembler = Disassembler || {};
 
     switch (parseInt(bytes[0], 16)) {
     case 0:
-      this.mnemonic = 'iuc';
+      this.mnemonic = 'nop';
       this.desc = 'No operation';
       break;
     case 1:
@@ -107,7 +107,7 @@ var Disassembler = Disassembler || {};
       this.desc = 'Store register ' + regA + ' at address ' + paddedAddress;
       break;
     case 13:
-      this.mnemonic = 'imtr ' + regA + ', ' + regB + '(' + regC + ')';
+      this.mnemonic = 'imtr ' + regA + ', ' + regB + ', ' + regC;
       this.desc = 'Load address ' + regB + ' + ' + regC + ' to register ' + regA;
       break
     case 14:
@@ -135,8 +135,28 @@ var Disassembler = Disassembler || {};
       this.desc = 'Load immediate 0x' + value + ' to lower ' + regA;
       break;
     case 20:
-      this.mnemonic = 'ldur ' + regA + ', 0x' + value;;
+      this.mnemonic = 'ldur ' + regA + ', 0x' + value;
       this.desc = 'Load immediate 0x' + value + ' to upper ' + regA;
+      break;
+    case 21:
+      this.mnemonic = 'andr ' + regA + ', ' + regB + ', ' + regC;
+      this.desc = 'Set ' + regA + ' to ' + regB + ' & ' + regC;
+      break;
+    case 22:
+      this.mnemonic = 'orr ' + regA + ', ' + regB + ', ' + regC;
+      this.desc = 'Set ' + regA + ' to ' + regB + ' | ' + regC;
+      break;
+    case 23:
+      this.mnemonic = 'xorr ' + regA + ', ' + regB + ', ' + regC;
+      this.desc = 'Set ' + regA + ' to ' + regB + ' ^ ' + regC;
+      break;
+    case 24:
+      this.mnemonic = 'srlr ' + regA + ', ' + regB + ', ' + regC;
+      this.desc = 'Set ' + regA + ' to ' + regB + ' >> ' + regC;
+      break;
+    case 25:
+      this.mnemonic = 'sllr ' + regA + ', ' + regB + ', ' + regC;
+      this.desc = 'Set ' + regA + ' to ' + regB + ' << ' + regC;
       break;
     default:
       throw "Invalid opcode '" + bytes[0] + "'";
@@ -161,7 +181,7 @@ var Disassembler = Disassembler || {};
 
       if (this.next[0] !== this.address + 1) {
         string += '<span class="mnemonic">' + this.mnemonic +
-          '</span>' + '    ';
+          '</span>' + '\t';
 
         if (this.address < idtLength) // Interrupt vector
           string += instructions[this.next[0]].getLabel('interrupt').name;
@@ -172,12 +192,12 @@ var Disassembler = Disassembler || {};
 
       } else if (this.next[1] !== undefined) { // Branch instruction
         string += '<span class="mnemonic">' + this.mnemonic + '</span>' +
-          '    ' + instructions[this.next[1]].getLabel().name;
+          '\t' + instructions[this.next[1]].getLabel().name;
       } else {
         var components = this.mnemonic.replace(/,/g, '').replace(/ +/g, ' ').split(' ');
 
         string += '<span class="mnemonic">' + components[0] +
-          '</span>   <span class="value">' +
+          '</span>\t<span class="value">' +
           components.slice(1).join('</span>, <span class="value">')
           + '</span>';
       }
@@ -407,7 +427,6 @@ var Disassembler = Disassembler || {};
 
   var refresh = function() { // Refresh display
     $errors.html('');
-    $warnings.html('');
     $output.html('');
     _labelCounter = 0;
     _routineCounter = 0;
