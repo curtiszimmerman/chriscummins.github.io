@@ -16,7 +16,7 @@ people have with PHP, I thought I'd document my experiences here
 where, after 3 months of development, I kicked the bucket and
 reimplemented the entire stack in Clojure.
 
-##### Why PHP?
+## Why PHP?
 
 In no uncertain terms, PHP is a *broken language*. I knew this from
 the outset. My first exposure to the language was in reading Eevee's
@@ -32,7 +32,7 @@ effort that was being expended working around the caveats of the
 language started to drain at my enthusiasm for it, so it was time to
 look a superior alternative.
 
-##### Why Clojure?
+## Why Clojure?
 
 Of the languages which I considered (including the usual suspects of
 Ruby, Python & Node), Clojure stood out as being the choice that would
@@ -55,7 +55,7 @@ engrossed in the purity of the language. While the C family of
 languages feel like an extension of machine code, LISP dialects feel
 like an extension of mathematics and abstract logic.
 
-##### Porting the codebase
+## Porting the codebase
 
 The rewrite took just over 3 days, and while my experiences with
 Scheme meant that I was fairly comfortable with the syntax of LISPs,

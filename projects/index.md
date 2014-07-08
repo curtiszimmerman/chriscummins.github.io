@@ -3,9 +3,7 @@ layout: default
 title: Open Source Projects
 ---
 
-# Open Source Projects
-
-##### Projects that I have worked on
+# Projects that I have worked on
 
 **[GNOME](http://www.gnome.org/)** - A desktop environment and application
 suite for Linux. My contributions include multiple patches for a
@@ -28,7 +26,7 @@ user interfaces. I developed a prototype of organic swarming
 behaviours for this, modelling the flocking behaviour and movements of
 birds in flight.
 
-##### Projects that I have created
+# Projects that I have created
 
 **[pip-db](https://github.com/ChrisCummins/pip-db)** - A search engine
 and data analysis application for storing specific biological data,
