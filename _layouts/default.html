@@ -6,14 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>{{ page.title }}</title>
     <meta name="description" content="The personal website of software developer Chris Cummins.">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="msapplication-tooltip" content="Chris Cummins personal website">
+    <meta name="author" content="Chris Cummins">
 
-    <link href="http://fonts.googleapis.com/css?family=Montserrat:700,400" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="/css/styles.css">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
 
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
@@ -23,100 +20,77 @@
 
   <body>
 
-    <div class="wrapper">
-
-      <header>
-
-        <center>
-          <div id="navbar">
-            <h1>
-              <a href="/">
-                CHRIS<b>CUMMINS</b>
-              </a>
-            </h1>
-            <div id="nav">
-                <a href="/cv/"><b>C</b>urriculum <b>V</b>itae</a> |
-                <a href="/projects/">Open Source Projects</a>
-            </div>
-          </div>
-
-          <div id="egobar">
-
-            <div class="img-frame">
-              <a href="mailto:chrisc.101@gmail.com" title="Send me an email">
-                <img src="/images/selfie.jpg" width="180" height="180"/>
-              </a>
-            </div>
-
-            <p class="view">
-              <a href="https://github.com/ChrisCummins" target="_blank">
-                GitHub
-                <small>Code goes here</small>
-              </a>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="/">Chris Cummins</a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right login-creds">
+              Logged in as <strong>root</strong>
             </p>
-            <p class="view">
-              <a href="http://www.linkedin.com/profile/view?id=195091553" target="_blank">
-                Linked In
-                <small>All professional like</small>
-              </a>
-            </p>
-            <p class="view">
-              <a href="http://www.facebook.com/cecummins" target="_blank">
-                Facebook
-                <small>All unprofessional like</small>
-              </a>
-            </p>
-            <p class="view">
-              <a href="http://www.youtube.com/user/ChrisCummins" target="_blank">
-                YouTube
-                <small>Hitting drums with sticks</small>
-              </a>
-            </p>
-            <p class="view">
-              <a href="http://soundcloud.com/peakstudio" target="_blank">
-                SoundCloud
-                <small>Making noises with other people</small>
-              </a>
-            </p>
-
-          </div>
-
-        </center>
-      </header>
-
-      <section>
-        {% comment %} page.date is used as a sentinel to find out if we are
-        rendering a post {% endcomment %}
-        {% if page.date %}
-          <div id="post">
-            <h1 class="title">{{ page.title }}</h1>
-        {% endif %}
-
-        {{ content }}
-
-        {% if page.date %}
-            <hr style="margin: 20pt 0 10pt;">
-            <div id="read-more">
-              <a href="/#posts" title="Return to home page">More posts &gt;&gt;</a>
-            </div>
-            <div id="date">
-              {{ page.date | date_to_string }}
-            </div>
-          </div><!-- /#post -->
-        {% endif %}
-      </section>
-      <footer>
-        <center>
-          <p>
-            <small>
-              <a href="/posts/about/">About</a> this site.
-            </small>
-          </p>
-        </center>
-      </footer>
+            <ul class="nav">
+              <li class="active"><a href="/">Home</a></li>
+              <li><a href="/cv/">CV</a></li>
+              <li><a href="/projects/">Projects</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
     </div>
 
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="active"><a href="/">Home page</a></li>
+              <li><a href="/cv/">Curriculum Vitae</a></li>
+              <li><a href="/projects/">Open Source Projects</a></li>
+              <hr>
+              <li><a href="http://www.linkedin.com/profile/view?id=195091553" target="_blank">LinkedIn</a></li>
+              <li><a href="https://github.com/ChrisCummins"                   target="_blank">GitHub</a></li>
+              <li><a href="http://www.facebook.com/cecummins"                 target="_blank">Facebook</a></li>
+              <li><a href="http://www.youtube.com/user/ChrisCummins"          target="_blank">YouTube</a></li>
+              <li><a href="http://soundcloud.com/peakstudio"                  target="_blank">SoundCloud</a></li>
+              <li><a href="mailto:chrisc.101@gmail.com">Email</a></li>
+              <hr>
+              <li><a href="/posts/about/">About this site</a></li>
+            </ul>
+          </div><!--/.well -->
+          <!-- <img src="/images/selfie.jpg"/> -->
+        </div><!--/span-->
+        <div id="body-span" class="span9">
+          <div class="hero-unit">
+            <h1>{{ page.title }}</h1>
+          </div>
+          <div id="content" class="row-fluid">
+            <div class="span12">
+              {{ content }}
+              {% if page.date %}
+              <div id="post-nav">
+                <div id="read-more">
+                  <a href="/#posts" title="Return to home page">More posts &gt;&gt;</a>
+                </div>
+                <div id="date">
+                  {{ page.date | date_to_string }}
+                </div>
+              </div>
+              {% endif %}
+            </div><!--/span-->
+          </div><!--/row-->
+        </div><!--/span-->
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <p>&copy; <a href="mailto:chrisc.101@gmail.com">Chris Cummins</a> 2014</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-    <script src="/js/site.min.js"></script>
+    <script src="/js/site.js"></script>
+
   </body>
 </html>
