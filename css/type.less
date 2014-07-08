@@ -33,7 +33,7 @@ i, cite, em, var, address, dfn {
 }
 
 i:before, cite:before, em:before, var:before, address:before, dfn:before,
-i:after, cite:after, em:after, var:after, address:after, dfn:after 
+i:after, cite:after, em:after, var:after, address:after, dfn:after
 {
   content: '/';
 }
@@ -67,6 +67,7 @@ a.text-success:focus { color: @successText; }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
+  font-size: @baseFontSize;
   font-family: @headingsFontFamily;
   font-weight: @headingsFontWeight;
   line-height: @baseLineHeight;
@@ -79,6 +80,11 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+h1, h2, h3, h4, h5, h6,
+h1 small, h2 small, h3 small, h4 small {
+  font-size: @baseFontSize;
+}
+
 h1,
 h2,
 h3 { line-height: @baseLineHeight; }
@@ -89,21 +95,14 @@ h3:after {
   content: " <<<";
 }
 
-h1 { font-size: @baseFontSize; 
-text-transform: uppercase;} // ~38px
-h2 { font-size: @baseFontSize; 
-text-align: center;
-white-space:nowrap;
-} // ~32px
-h3 { font-size: @baseFontSize; } // ~24px
-h4 { font-size: @baseFontSize; color: @pink} // ~18px
-h5 { font-size: @baseFontSize; }
-h6 { font-size: @baseFontSize; } // ~12px
-
-h1 small { font-size: @baseFontSize; } // ~24px
-h2 small { font-size: @baseFontSize; } // ~18px
-h3 small { font-size: @baseFontSize; }
-h4 small { font-size: @baseFontSize; }
+h1, h2 {
+    text-transform: uppercase;
+    margin-bottom: @baseLineHeight;
+    margin-top: @baseLineHeight;
+}
+h1 {
+    text-align: center;
+}
 
 
 // Page header
