@@ -28,19 +28,12 @@ $(document).ready(function() {
   /*
    * Hyphenate the site text.
    */
-  $('section p, section p a').hyphenate('en-gb');
-
-  /*
-   * Remove the empty first line in pre-formatted code blocks.
-   */
-  $('section code').each(function(index) {
-    $(this).html($(this).html().replace(/^\s*\n/, ''));
-  });
+  $('#content p, #content p a').hyphenate('en-gb');
 
   /*
    * For each image, add a "Click to see original" link.
    */
-  $('section img').each(function(index) {
+  $('#content img').each(function(index) {
     if (!$(this).parent().is('a')) // Check that parent isn't already a link
       $(this).wrap('<a href="' + $(this).attr('src') + '" ' +
                    'title="Click to see original" ' +
