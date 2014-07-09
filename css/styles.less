@@ -76,10 +76,11 @@ body {
 }
 
 .nav-list {
-    width: 80%;
+    width: 85%;
+    max-width: 300px;
+    text-align: left;
 }
 .sidebar-nav {
-    padding: 9px 0;
     margin: 0 auto @baseLineHeight;
 }
 
@@ -89,13 +90,13 @@ body {
 #content li {
     list-style: disc;
 }
-#content #post-nav {
-    margin-top: @baseLineHeight;
-}
 #content #result,
 #content #read-more,
-#posts ul li .date {
+#content li .date {
     float: right !important;
+}
+#content #post-nav {
+    margin-top: @baseLineHeight;
 }
 
 iframe {
@@ -121,6 +122,11 @@ td {
         float: none;
         padding-left: 5px;
         padding-right: 5px;
+    }
+
+    .navbar .brand {
+        text-align: center;
+        float: center;
     }
 }
 @media (min-width: 980px) {
