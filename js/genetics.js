@@ -205,26 +205,25 @@ var Genetics = Genetics || {};
                                             workingSize,
                                             workingSize).data;
     var diff = 0;
-    var p = workingSize * workingSize * 4 - 1;
 
-    do {
-      if (p % 3) {
+    /*
+     * Sum up the difference between the pixel values of the reference
+     * image and the current individual. Subtract the ratio of this
+     * difference and the largest possible difference from 1 in order
+     * to get the fitness.
+     */
+    if (diffSquared) {  // Sum squared differences.
+      for (var p = 0; p < workingSize * workingSize * 4; p++) {
         var dp = imageData[p] - workingData[p];
-        if (diffSquared) {
-          diff += dp * dp;
-        } else {
-          if (dp < 0)
-            diff -= dp;
-          else
-            diff += dp;
-        }
+        diff += dp * dp;
       }
-    } while (--p);
 
-    if (diffSquared) {
-      this.fitness = (1 - diff / (workingSize * workingSize * 3 * 256 * 256));
-    } else {
-      this.fitness = (1 - diff / (workingSize * workingSize * 3 * 256));
+    this.fitness = 1 - diff / (workingSize * workingSize * 4 * 256 * 256);
+    } else {  // Sum differences.
+      for (var p = 0; p < workingSize * workingSize * 4; p++)
+        diff += Math.abs(imageData[p] - workingData[p]);
+
+      this.fitness = 1 - diff / (workingSize * workingSize * 4 * 256);
     }
   }
 
@@ -527,12 +526,12 @@ var Genetics = Genetics || {};
                             _diffSquared) {
 
     if (_populationSize === undefined)
-      var _populationSize = 40;
+      var _populationSize = 50;
     $('#population-size-slider').slider('value', _populationSize);
     $('#population-size').text(_populationSize);
 
     if (_cutoffSlider === undefined)
-      var _cutoffSlider = 25;
+      var _cutoffSlider = 15;
     $('#cutoff-slider').slider('value', _cutoffSlider);
     $('#cutoff').text(_cutoffSlider + '%');
 
@@ -541,7 +540,7 @@ var Genetics = Genetics || {};
     $('#fittest-survive').prop('checked', _fittestSurvive);
 
     if (_mutationChance === undefined)
-      var _mutationChance = 2.4;
+      var _mutationChance = 1.0;
     $('#mutation-chance-slider').slider('value', _mutationChance);
     $('#mutation-chance').text(_mutationChance.toFixed(1) + '%');
 
@@ -551,17 +550,17 @@ var Genetics = Genetics || {};
     $('#mutation-amount').text(_mutationAmount + '%');
 
     if (_polygons === undefined)
-      var _polygons = 120;
+      var _polygons = 125;
     $('#polygons-slider').slider('value', _polygons);
     $('#polygons').text(_polygons);
 
     if (_vertices === undefined)
-      var _vertices = 6;
+      var _vertices = 3;
     $('#vertices-slider').slider('value', _vertices);
     $('#vertices').text(_vertices);
 
     if (_resolution === undefined)
-      var _resolution = 70;
+      var _resolution = 75;
     $('#resolution-slider').slider('value', _resolution);
     $('#resolution').text(_resolution + 'x' + _resolution);
 
@@ -746,9 +745,10 @@ var Genetics = Genetics || {};
    */
   $('#get-url').click(function() {
     var urlBox = $('#share-url')[0];
+    // NOTE THIS MUST BE UPDATED IF THE PAGE MOVES:
+    var location = 'http://chriscummins.cc/s/genetics/';
 
-    urlBox.value = 'http://chriscummins.cc/genetics/#' +
-        configurationToString();
+    urlBox.value = location + '#' + configurationToString();
     $('#share').show();
     urlBox.focus();
     urlBox.select();
